@@ -5,10 +5,10 @@ import { ServerMetrics } from '../models/server-metrics';
 
 @Injectable({ providedIn: 'root' })
 export class MetricsService {
-  private http = inject(HttpClient);
-  private apiUrl = '/api/metrics';
+  private readonly _http = inject(HttpClient);
+  private readonly _apiUrl = '/api/metrics';
 
   fetchMetrics(): Observable<ServerMetrics> {
-    return this.http.get<ServerMetrics>(this.apiUrl);
+    return this._http.get<ServerMetrics>(this._apiUrl);
   }
 }

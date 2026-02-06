@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ServerMetrics } from '../../models/server-metrics';
+import { MetricsService } from '../../services/metrics.service';
 
 /**
  * ❌ ANTIPATRÓN: Polling con setInterval
@@ -19,30 +19,25 @@ import { ServerMetrics } from '../../models/server-metrics';
   templateUrl: './dashboard.html',
 })
 export class DashboardComponent implements OnInit {
-  private http = inject(HttpClient);
+  private readonly _metricsService = inject(MetricsService);
 
   metrics = signal<ServerMetrics | null>(null);
-  isLoading = signal(false);
-  pollingMethod = signal('setInterval (❌ Antipatrón)');
+  _isLoading = signal(false);
+  readonly pollingMethod = signal('setInterval (❌ Antipatrón)');
 
   ngOnInit() {
-    // ❌ Petición inicial
     this.fetchData();
 
-    // ❌ setInterval: cada tick dispara detección de cambios en TODA la app
     setInterval(() => {
-      // ❌ Si la petición anterior no ha terminado, se amontona otra encima
       this.fetchData();
     }, 5000);
-    // ❌ Si el componente se destruye, este interval SIGUE ejecutándose → Memory Leak
   }
 
   private fetchData() {
-    this.isLoading.set(true);
-    // ❌ subscribe sin cleanup: otra fuente de memory leaks
-    this.http.get<ServerMetrics>('/api/metrics').subscribe((data) => {
+    this._isLoading.set(true);
+    this._metricsService.fetchMetrics().subscribe((data) => {
       this.metrics.set(data);
-      this.isLoading.set(false);
+      this._isLoading.set(false);
     });
     // ❌ Sin manejo de errores: si falla, isLoading queda en true para siempre
   }
