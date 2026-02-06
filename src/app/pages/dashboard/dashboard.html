@@ -1,0 +1,138 @@
+<div class="space-y-6">
+  <!-- Status Bar -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <h2 class="text-2xl font-bold tracking-tight">Dashboard de Métricas</h2>
+      @if (metrics()) {
+        <span
+          class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
+          [class]="statusClass()"
+        >
+          <span class="h-1.5 w-1.5 rounded-full" [class]="statusDotClass()"></span>
+          {{ metrics()!.status | uppercase }}
+        </span>
+      }
+    </div>
+    <div class="flex items-center gap-4 text-sm text-gray-400">
+      @if (isLoading()) {
+        <span class="flex items-center gap-2">
+          <svg class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          Actualizando...
+        </span>
+      }
+      @if (metrics()) {
+        <span class="font-mono text-xs">
+          Última actualización: {{ metrics()!.timestamp | date:'HH:mm:ss' }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <!-- Metric Cards -->
+  @if (metrics(); as m) {
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- CPU -->
+      <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-400">CPU</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7 2a1 1 0 00-.707 1.707L7 4.414v3.758a1 1 0 01-.293.707l-4 4C.817 14.769 2.156 18 4.828 18h10.343c2.673 0 4.012-3.231 2.122-5.121l-4-4A1 1 0 0113 8.172V4.414l.707-.707A1 1 0 0013 2H7zm2 6.172V4h2v4.172a3 3 0 00.879 2.12l1.027 1.028a4 4 0 00-2.171.102l-.47.156a4 4 0 01-2.53 0l-.563-.187a1.993 1.993 0 00-.114-.035l1.063-1.063A3 3 0 009 8.172z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <p class="mt-2 text-3xl font-bold tabular-nums">{{ m.cpu }}%</p>
+        <div class="mt-3 h-2 rounded-full bg-gray-800">
+          <div
+            class="h-2 rounded-full transition-all duration-500"
+            [class]="m.cpu > 85 ? 'bg-red-500' : m.cpu > 65 ? 'bg-amber-500' : 'bg-emerald-500'"
+            [style.width.%]="m.cpu"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Memory -->
+      <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-400">Memoria</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M13 7H7v6h6V7z"/>
+            <path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <p class="mt-2 text-3xl font-bold tabular-nums">{{ m.memory }}%</p>
+        <div class="mt-3 h-2 rounded-full bg-gray-800">
+          <div
+            class="h-2 rounded-full bg-violet-500 transition-all duration-500"
+            [style.width.%]="m.memory"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Response Time -->
+      <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-400">Tiempo de Respuesta</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <p class="mt-2 text-3xl font-bold tabular-nums">{{ m.responseTime }}<span class="ml-1 text-base font-normal text-gray-500">ms</span></p>
+      </div>
+
+      <!-- Active Connections -->
+      <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-400">Conexiones Activas</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+          </svg>
+        </div>
+        <p class="mt-2 text-3xl font-bold tabular-nums">{{ m.activeConnections }}</p>
+      </div>
+
+      <!-- Requests/sec -->
+      <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-400">Peticiones/seg</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <p class="mt-2 text-3xl font-bold tabular-nums">{{ m.requestsPerSecond | number }}</p>
+      </div>
+
+      <!-- Uptime -->
+      <div class="rounded-xl border border-gray-800 bg-gray-900/50 p-5">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-400">Uptime</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <p class="mt-2 text-3xl font-bold tabular-nums">{{ m.uptime }}%</p>
+      </div>
+    </div>
+  } @else if (!isLoading()) {
+    <!-- Empty state -->
+    <div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-700 bg-gray-900/30 py-16">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+      <p class="mt-4 text-gray-500">Sin datos disponibles</p>
+    </div>
+  }
+
+  <!-- Method badge -->
+  <div class="mt-8 rounded-lg border border-gray-800 bg-gray-900/30 px-4 py-3">
+    <div class="flex items-center gap-2 text-xs text-gray-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+      <span>Método de Polling: <strong class="text-gray-300">{{ pollingMethod() }}</strong></span>
+      <span class="mx-2">|</span>
+      <span>Intervalo: <strong class="text-gray-300">5 segundos</strong></span>
+    </div>
+  </div>
+</div>
