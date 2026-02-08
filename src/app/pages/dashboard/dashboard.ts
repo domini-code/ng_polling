@@ -1,4 +1,4 @@
-import { Component, linkedSignal, signal } from '@angular/core';
+import { Component, inject, linkedSignal, signal } from '@angular/core';
 import { DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { httpResource } from '@angular/common/http';
@@ -36,12 +36,13 @@ export class DashboardComponent {
   pollingMethod = signal('httpResource + linkedSignal (🏆 Angular Moderno)');
 
   // 1️⃣ Trigger de polling: un Signal que cambia cada 5 segundos
-  //    toSignal convierte el Observable interval en un Signal
+
   private pollTrigger = toSignal(interval(5000), { initialValue: 0 });
 
   // 2️⃣ Recurso HTTP reactivo: se recarga cuando pollTrigger cambia
+  //    httpResource espera una URL (no un Observable); hace el GET internamente
   private rawResource = httpResource<ServerMetrics>(() => {
-    this.pollTrigger(); // Leer el signal crea la dependencia reactiva
+    this.pollTrigger();
     return '/api/metrics';
   });
 
