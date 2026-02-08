@@ -22,7 +22,7 @@ export class DashboardComponent implements OnInit {
   private readonly _metricsService = inject(MetricsService);
 
   metrics = signal<ServerMetrics | null>(null);
-  _isLoading = signal(false);
+  isLoading = signal(false);
   readonly pollingMethod = signal('setInterval (❌ Antipatrón)');
 
   ngOnInit() {
@@ -34,10 +34,10 @@ export class DashboardComponent implements OnInit {
   }
 
   private fetchData() {
-    this._isLoading.set(true);
+    this.isLoading.set(true);
     this._metricsService.fetchMetrics().subscribe((data) => {
       this.metrics.set(data);
-      this._isLoading.set(false);
+      this.isLoading.set(false);
     });
     // ❌ Sin manejo de errores: si falla, isLoading queda en true para siempre
   }
