@@ -30,14 +30,9 @@ export class DashboardComponent {
   // ✅ El polling se define como un flujo reactivo declarativo
   private polling$ = timer(0, 5000)
     .pipe(
-      // ✅ tap para activar el indicador de carga
       tap(() => this.isLoading.set(true)),
-      // ✅ switchMap cancela la petición anterior si aún no ha terminado
       switchMap(() => this.metricsService.fetchMetrics()),
-      // ✅ finalize se ejecuta cuando el observable se completa o se destruye
       finalize(() => this.isLoading.set(false)),
-      // ✅ takeUntilDestroyed: limpieza automática al destruir el componente
-      // No necesitamos OnDestroy ni Subject para desuscribirnos
       takeUntilDestroyed()
     )
     .subscribe((data) => {

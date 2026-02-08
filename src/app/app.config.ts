@@ -4,11 +4,14 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { mockApiInterceptor } from './interceptors/mock-api.interceptor';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([mockApiInterceptor])),
+    provideHttpClient(
+      withInterceptors(environment.useBackend ? [] : [mockApiInterceptor])
+    ),
   ],
 };

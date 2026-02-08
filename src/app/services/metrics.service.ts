@@ -6,7 +6,7 @@ import { ServerMetrics } from '../models/server-metrics';
 @Injectable({ providedIn: 'root' })
 export class MetricsService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/metrics';
+  private apiUrl = 'http://localhost:3001/api/metrics';
 
   fetchMetrics(): Observable<ServerMetrics> {
     return this.http.get<ServerMetrics>(this.apiUrl);
