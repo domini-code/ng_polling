@@ -33,8 +33,6 @@ export class DashboardComponent implements OnInit {
   pollingMethod = signal('runOutsideAngular + RxJS (🚀 Optimizado para Zone.js)');
 
   ngOnInit() {
-    // 🚀 Ejecutamos el timer FUERA de la zona de Angular
-    // Así, el timer NO dispara detección de cambios en cada tick
     this.ngZone.runOutsideAngular(() => {
       timer(0, 5000)
         .pipe(
