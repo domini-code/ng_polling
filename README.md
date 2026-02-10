@@ -2,6 +2,47 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.3.
 
+## Vídeo
+
+[![Polling en Angular](https://img.youtube.com/vi/rBOoCgY5fpc/maxresdefault.jpg)](https://youtu.be/rBOoCgY5fpc)
+
+## Cómo levantar el proyecto
+
+### 1. Instalar dependencias
+
+```bash
+npm install
+```
+
+### 2. Levantar el backend (API de métricas)
+
+En una terminal:
+
+```bash
+npm run server
+```
+
+El servidor Express quedará disponible en **http://localhost:3001** y expone:
+
+- `GET /api/metrics` — métricas mock (CPU, memoria, conexiones, etc.)
+- `GET /api/metrics?delay=7000` — misma respuesta con delay opcional (útil para probar timeouts)
+
+### 3. Levantar el cliente (Angular)
+
+En **otra** terminal:
+
+```bash
+npm start
+```
+
+o:
+
+```bash
+ng serve
+```
+
+Abre el navegador en **http://localhost:4200/**. La aplicación se recargará al modificar el código.
+
 ## Development server
 
 To start a local development server, run:
